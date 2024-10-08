@@ -1,5 +1,5 @@
 # Used for prod build.
-FROM php:8.1-fpm as php
+FROM php:8.3-fpm as php
 
 # Set environment variables
 ENV PHP_OPCACHE_ENABLE=1
@@ -20,6 +20,8 @@ COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
 COPY ./docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+
+
 
 # Set working directory to ...
 WORKDIR /app
