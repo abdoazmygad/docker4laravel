@@ -1,45 +1,41 @@
-FROM php:8.3-fpm
+# Used for prod build.
+FROM php:8.1-fpm as php
 
-ARG user
-ARG uid
+# Set environment variables
+ENV PHP_OPCACHE_ENABLE=1
+ENV PHP_OPCACHE_ENABLE_CLI=0
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
+ENV PHP_OPCACHE_REVALIDATE_FREQ=0
 
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip
+# Install dependencies.
+RUN apt-get update && apt-get install -y unzip libpq-dev libcurl4-gnutls-dev nginx libonig-dev
 
-# Clear cache(optional)
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install PHP extensions.
+RUN docker-php-ext-install mysqli pdo pdo_mysql bcmath curl opcache mbstring
 
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# Copy composer executable.
+COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 
-# install composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Copy configuration files.
+COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
+COPY ./docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 
-RUN useradd -u $uid -ms /bin/bash -g www-data $user
+# Set working directory to ...
+WORKDIR /app
 
-COPY . /var/www
+# Copy files from current folder to container current folder (set in workdir).
+COPY --chown=www-data:www-data . .
 
+# Create laravel caching folders.
+RUN mkdir -p ./storage/framework
+RUN mkdir -p ./storage/framework/{cache, testing, sessions, views}
+RUN mkdir -p ./storage/framework/bootstrap
+RUN mkdir -p ./storage/framework/bootstrap/cache
 
-# Copy the entrypoint script
-COPY ./docker-compose/entrypoint.sh /usr/local/bin/entrypoint.sh
+# Adjust user permission & group.
+RUN usermod --uid 1000 www-data
+RUN groupmod --gid 1000  www-data
 
-# Make sure the entrypoint is executable
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Set the entrypoint to your script
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-
-COPY --chown=$user:www-data . /var/www
-
-USER $user
-
-EXPOSE 9000
-
-CMD ["php-fpm"]
-
+# Run the entrypoint file.
+ENTRYPOINT [ "docker-compose/entrypoint.sh" ]
