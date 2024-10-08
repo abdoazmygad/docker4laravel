@@ -17,11 +17,9 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql bcmath curl opcache mbstring
 COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 
 # Copy configuration files.
-COPY ./docker-compose/php/php.ini /usr/local/etc/php/php.ini
-COPY ./docker-compose/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
-COPY ./docker-compose/nginx/nginx.conf /etc/nginx/nginx.conf
-
-
+COPY ./docker-compose/php/local.ini /usr/local/etc/php/php.ini
+COPY ./docker-compose/mysql /usr/local/etc/mysql/
+COPY ./docker-compose/nginx/laravel_eleven.conf /etc/nginx/nginx.conf
 
 # Set working directory to ...
 WORKDIR /app
