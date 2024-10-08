@@ -2,6 +2,7 @@
 # entrypoint.sh
 
 # Start the service
+composer install --no-interaction
 php artisan migrate
 php artisan config:clear
 php artisan cache:clear
