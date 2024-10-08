@@ -24,6 +24,17 @@ RUN useradd -u $uid -ms /bin/bash -g www-data $user
 
 COPY . /var/www
 
+
+# Copy the entrypoint script
+COPY ./docker-compose/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make sure the entrypoint is executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the entrypoint to your script
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+
 COPY --chown=$user:www-data . /var/www
 
 USER $user
@@ -31,3 +42,4 @@ USER $user
 EXPOSE 9000
 
 CMD ["php-fpm"]
+
