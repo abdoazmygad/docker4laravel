@@ -14,10 +14,10 @@ if [ ! -f "vendor/autoload.php" ]; then
 fi
 
 
-php artisan migrate
-php artisan clear
-php artisan optimize:clear
-php artisan migrate
+# php artisan migrate
+# php artisan clear
+# php artisan optimize:clear
+# php artisan migrate
 
 # Fix files ownership.
 chown -R www-data .
