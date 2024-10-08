@@ -39,4 +39,4 @@ RUN usermod --uid 1000 www-data
 RUN groupmod --gid 1000  www-data
 
 # # Run the entrypoint file.
-# ENTRYPOINT [ "docker-compose/entrypoint.sh" ]
+ENTRYPOINT [ "docker-compose/entrypoint.sh" ]
