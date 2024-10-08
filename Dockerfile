@@ -20,6 +20,7 @@ COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 COPY ./docker-compose/php/local.ini /usr/local/etc/php/php.ini
 COPY ./docker-compose/mysql /usr/local/etc/mysql/
 COPY ./docker-compose/nginx/laravel_eleven.conf /etc/nginx/nginx.conf
+# COPY ./database/database.sql /var/www/database/database.sqlite
 
 # Set working directory to ...
 WORKDIR /app
