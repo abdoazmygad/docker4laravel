@@ -20,6 +20,7 @@ jobs:
           REMOTE_HOST:  ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.HOST_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET_DIRECTORY }}
+  
 
       - name: 'Executing remote ssh commands using ssh key'
         uses: appleboy/ssh-action@master
@@ -30,11 +31,6 @@ jobs:
           script:  |
             cd ${{ secrets.REMOTE_TARGET_DIRECTORY }}
             git pull origin main
-            
-      - name: 'Install Docker Compose'
-        run: |
-            sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m) -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
 
       - name: 'Build & run services through docker-compose'
         run: docker-compose up -d --build --force-recreate
