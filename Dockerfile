@@ -37,6 +37,8 @@ RUN mkdir -p ./storage/framework/bootstrap/cache
 # Adjust user permission & group.
 RUN usermod --uid 1000 www-data
 RUN groupmod --gid 1000  www-data
+# Add execution permission for the entrypoint file.
+RUN chmod +x docker-compose/entrypoint.sh
 
-# # Run the entrypoint file.
+# Run the entrypoint file.
 ENTRYPOINT [ "docker-compose/entrypoint.sh" ]
