@@ -17,6 +17,7 @@ php artisan migrate
 php artisan optimize:clear
 
 
+
 # Fix files ownership.
 chown -R www-data .
 chown -R www-data /app/storage
