@@ -1,6 +1,7 @@
 name: CI/CD for Laravel on AWS EC2
 on:
     pull_request:
+        branches: [ "main"]
         types: [opened, reopened, edited]
 
 jobs:
