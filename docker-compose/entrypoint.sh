@@ -12,7 +12,7 @@ if [ ! -f "vendor/autoload.php" ]; then
 fi
 
 php artisan test
-php artisan config
+php artisan config:cache
 php artisan migrate
 php artisan optimize:clear
 
