@@ -16,10 +16,6 @@ jobs:
         uses: actions/checkout@v2
 
 
-      # Step 3: Rsync files to the EC2 server
-      - name: Rsync Files to EC2
-        run: |
-          rsync -avz --exclude '.git' --exclude 'node_modules' --exclude 'vendor' ./ ${{ secrets.HOST_USER }}@${{ secrets.HOST_DNS }}:${{ secrets.REMOTE_TARGET_DIRECTORY }}
 
       # Step 4: Install Docker Compose
       - name: Install Docker Compose
