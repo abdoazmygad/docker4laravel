@@ -3,12 +3,9 @@ name: CI/CD for testing pipleline on Pull Requests
 on:
   pull_request:
     branches: [main]
-    types: [opened, reopened, edited]
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
@@ -22,6 +19,6 @@ jobs:
 
       - name: 'Run tests'
         run: docker-compose run --rm laravel_eleven_app php artisan test
-        
+
       - name: 'Tear down Docker Compose'
         run: docker-compose down
