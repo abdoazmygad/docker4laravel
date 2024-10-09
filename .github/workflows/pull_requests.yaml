@@ -11,7 +11,7 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: Set up Docker Compose
-                run: docker-compose -f docker-compose.yml up -d --build
+                run: docker-compose up -d --build
             - name: Run tests
                 run: docker-compose exec -T laravel_eleven_app  php artisan test
             - name: Tear down Docker Compose
