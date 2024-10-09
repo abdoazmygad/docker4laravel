@@ -1,0 +1,35 @@
+name: Push To main/master Branches
+# Trigger deployment only on push to main branch
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: 'Deploy To Production Server (AWS EC2)'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout the files'
+        uses: actions/checkout@v2
+
+      - name: 'Deploy to AWS EC2 server using SSH'
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          REMOTE_HOST:  ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.HOST_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET_DIRECTORY }}
+
+      - name: 'Executing remote ssh commands using ssh key'
+        uses: appleboy/ssh-action@master
+        with:
+          host:  ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.HOST_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script:  |
+            cd ${{ secrets.REMOTE_TARGET_DIRECTORY }}
+            git pull origin main
+            
+      - name: 'Build & run services through docker-compose'
+        run: docker-compose up -d --build --force-recreate
