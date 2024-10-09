@@ -15,11 +15,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      # Step 2: Set up SSH agent and add private key
-      - name: Set up SSH Agent
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
       # Step 3: Rsync files to the EC2 server
       - name: Rsync Files to EC2
