@@ -8,7 +8,7 @@ services:
                 uid: 1000
             context: .
             dockerfile: ./Dockerfile
-        image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_app:latest
+        # image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_app:latest
         container_name: laravel_eleven_app
         restart: unless-stopped
         depends_on:
@@ -22,7 +22,7 @@ services:
     # Nginx service
     laravel_eleven_webserver:
         platform: linux/amd64
-        image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_webserver:latest
+        # image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_webserver:latest
         container_name: laravel_eleven_webserver_container
         restart: unless-stopped
         ports:
@@ -38,7 +38,7 @@ services:
     # MySQL service
     laravel_eleven_app_mysql:
         platform: linux/amd64
-        image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_mysql:latest
+        # image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_mysql:latest
         container_name: laravel_eleven_app_mysql_container
         restart: unless-stopped
         ports:
@@ -55,7 +55,7 @@ services:
 
     # PhpMyAdmin service
     laravel_eleven_phpmyadmin:
-        image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_phpmyadmin:latest
+        # image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_phpmyadmin:latest
         container_name: laravel_eleven_phpmyadmin_container
         restart: unless-stopped
         ports:
@@ -72,7 +72,7 @@ services:
 
     # Redis service
     laravel_eleven_redis:
-        image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_redis:latest
+        # image: mydockeridis1995/dockerized-laravel-app_laravel_eleven_redis:latest
         container_name: laravel_eleven_redis_container
         ports:
             - "7379:6379"
