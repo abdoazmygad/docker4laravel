@@ -46,34 +46,34 @@ jobs:
           docker tag redis:7.2-alpine ${{ secrets.DOCKER_REGISTRY }}/redis:7.2-alpine
           docker push ${{ secrets.DOCKER_REGISTRY }}/redis:7.2-alpine
 
-  deploy:
-    name: 'Deploy Docker Images to AWS EC2'
-    runs-on: ubuntu-latest
-    needs: build
+#   deploy:
+#     name: 'Deploy Docker Images to AWS EC2'
+#     runs-on: ubuntu-latest
+#     needs: build
 
-    steps:
-      # Step 1: Checkout the code (if needed)
-      - name: 'Checkout the code'
-        uses: actions/checkout@v2
+#     steps:
+#       # Step 1: Checkout the code (if needed)
+#       - name: 'Checkout the code'
+#         uses: actions/checkout@v2
 
-      # Step 2: SSH into the EC2 server and pull/run the images
-      - name: 'Deploy to AWS EC2 using SSH'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.HOST_USER }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          script: |
-            # Pull the latest images from the Docker registry
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/laravel_eleven_app_image:latest
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/nginx:alpine
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/mysql:5.7.22
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/phpmyadmin:5.2.1-apache
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/redis:7.2-alpine
+    #   # Step 2: SSH into the EC2 server and pull/run the images
+    #   - name: 'Deploy to AWS EC2 using SSH'
+    #     uses: appleboy/ssh-action@master
+    #     with:
+    #       host: ${{ secrets.HOST_DNS }}
+    #       username: ${{ secrets.HOST_USER }}
+    #       key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+    #       script: |
+    #         # Pull the latest images from the Docker registry
+    #         docker pull ${{ secrets.DOCKER_REGISTRY }}/laravel_eleven_app_image:latest
+    #         docker pull ${{ secrets.DOCKER_REGISTRY }}/nginx:alpine
+    #         docker pull ${{ secrets.DOCKER_REGISTRY }}/mysql:5.7.22
+    #         docker pull ${{ secrets.DOCKER_REGISTRY }}/phpmyadmin:5.2.1-apache
+    #         docker pull ${{ secrets.DOCKER_REGISTRY }}/redis:7.2-alpine
 
-            # Navigate to the directory with the docker-compose.yml file
-            cd ${{ secrets.REMOTE_TARGET_DIRECTORY }}
+    #         # Navigate to the directory with the docker-compose.yml file
+    #         cd ${{ secrets.REMOTE_TARGET_DIRECTORY }}
 
-            # Bring down any old containers and run the new ones
-            docker-compose down
-            docker-compose up -d
+    #         # Bring down any old containers and run the new ones
+    #         docker-compose down
+    #         docker-compose up -d
