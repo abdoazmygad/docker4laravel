@@ -30,7 +30,7 @@ jobs:
       # Step 3: Build and push the Docker images to the registry
       - name: 'Build and Push Docker Images'
         run: |
-          docker-compose -f docker-compose.yaml build
+          docker-compose -f docker-compose.yml build
           docker tag laravel_eleven_app_image ${{ secrets.DOCKER_REGISTRY }}/laravel_eleven_app_image:latest
           docker push ${{ secrets.DOCKER_REGISTRY }}/laravel_eleven_app_image:latest
           
@@ -69,7 +69,7 @@ jobs:
             docker pull ${{ secrets.DOCKER_REGISTRY }}/mysql:5.7.22
             docker pull ${{ secrets.DOCKER_REGISTRY }}/phpmyadmin:5.2.1-apache
             docker pull ${{ secrets.DOCKER_REGISTRY }}/redis:7.2-alpine
-            # Navigate to the directory with the docker-compose.yaml file
+            # Navigate to the directory with the docker-compose.yml file
             cd ${{ secrets.REMOTE_TARGET_DIRECTORY }}
             # Bring down any old containers and run the new ones
             docker-compose down
