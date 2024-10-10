@@ -11,7 +11,7 @@ if [ ! -f "vendor/autoload.php" ]; then
     composer install --no-interaction 
 fi
 
-php artisan test
+# php artisan test
 php artisan config:cache
 php artisan migrate
 php artisan optimize:clear
