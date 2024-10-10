@@ -42,22 +42,6 @@ jobs:
           HOST_USER: ${{ secrets.HOST_USER }}
           REMOTE_TARGET_DIRECTORY: ${{ secrets.REMOTE_TARGET_DIRECTORY }}
         run: |
-          # Install SSH client
-          sudo apt-get update
-          sudo apt-get install -y openssh-client
-
-          # Add SSH key to the agent
-          eval "$(ssh-agent -s)"
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-
-          # Connect to the EC2 instance and pull the latest images and restart containers
-          ssh -o StrictHostKeyChecking=no $HOST_USER@$HOST_DNS << 'EOF'
-            # Navigate to the target directory
-            cd $REMOTE_TARGET_DIRECTORY
-
-            # Pull the latest images
-            docker-compose pull
-
-            # Restart the services
-            docker-compose up -d --remove-orphans
-          EOF
+            sudo apt-get update
+            git pull origin main
+          
