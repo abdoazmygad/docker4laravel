@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    name: 'Build and Push Docker Images to Docker Hub Registry'
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +26,9 @@ jobs:
         run: |
           docker-compose build
           docker-compose push
+
+      - name: 'Tear down Docker Compose'
+        run: docker-compose down
 
   deploy:
     name: 'Deploy To Production Server (AWS EC2)'
