@@ -1,5 +1,5 @@
 # Use a specific version for better predictability
-FROM php:8.3-fpm as php
+FROM php:8.3-fpm AS php
 
 # Set environment variables
 ENV PHP_OPCACHE_ENABLE=1
@@ -24,7 +24,9 @@ COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 # Copy configuration files
 COPY ./docker-compose/php/local.ini /usr/local/etc/php/php.ini
 COPY ./docker-compose/mysql /usr/local/etc/mysql/
-COPY ./docker-compose/nginx/laravel_eleven.conf /etc/nginx/nginx.conf
+COPY ./docker-compose/nginx/nginx.conf /etc/nginx/nginx.conf
+
+
 
 # Set working directory to /app
 WORKDIR /app
