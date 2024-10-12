@@ -1,53 +1,69 @@
-# Use a specific version for better predictability
-FROM php:8.3-fpm AS php
+# Use PHP with Apache as the base image
+FROM php:8.2-apache AS web
 
-# Set environment variables
-ENV PHP_OPCACHE_ENABLE=1
-ENV PHP_OPCACHE_ENABLE_CLI=0
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
-ENV PHP_OPCACHE_REVALIDATE_FREQ=0
+# Install Additional System Dependencies
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip
 
-# Install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    unzip \
-    libpq-dev \
-    libcurl4-gnutls-dev \
-    nginx \
-    libonig-dev && \
-    docker-php-ext-install mysqli pdo pdo_mysql bcmath curl opcache mbstring && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy composer executable
-COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
+# Enable Apache mod_rewrite for URL rewriting
+RUN a2enmod rewrite
 
-# Copy configuration files
-COPY ./docker-compose/php/local.ini /usr/local/etc/php/php.ini
-COPY ./docker-compose/mysql /usr/local/etc/mysql/
-COPY ./docker-compose/nginx/nginx.conf /etc/nginx/nginx.conf
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql zip
 
+# Configure Apache DocumentRoot to point to Laravel's public directory
+# and update Apache configuration files
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# Copy the application code
+COPY . /var/www/html
 
-# Set working directory to /app
-WORKDIR /app
+# Set the working directory
+WORKDIR /var/www/html
 
-# Copy files from current folder to container
-COPY --chown=www-data:www-data . .
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Create Laravel caching folders
+# Install project dependencies
+RUN composer install
+
+# Set permissions
 RUN mkdir -p ./storage/framework/{cache,testing,sessions,views,bootstrap/cache} && \
     chown -R www-data:www-data ./storage
-
 # Adjust user permission & group
 RUN usermod --uid 1000 www-data && \
-    groupmod --gid 1000 www-data
+    groupmod --gid 1000 www-data 
+
+
+RUN echo 'chown -R www-data:www-data /var/www/ \
+            && composer dump-autoload \
+            && cp .env.example .env \
+            && php artisan key:generate \       
+            && php artisan config:cache \
+            && php artisan migrate \
+            && apachectl -D FOREGROUND' >> /root/container_init.sh && \
+                chmod 755 /root/container_init.sh
+
+
+# COPY ./docker-compose/wait-for-it.sh /usr/local/bin/wait-for-it.sh
+# RUN chmod +x /usr/local/bin/wait-for-it.sh
+
+# CMD ["/usr/local/bin/wait-for-it.sh", "mysql:3306", "--", "php", "artisan", "migrate"]
+
+# Wait for MySQL to be ready before running migrations
 
 # Add execution permission for the entrypoint file
-COPY docker-compose/entrypoint.sh /docker-compose/entrypoint.sh
-RUN chmod +x /docker-compose/entrypoint.sh
+# COPY docker-compose/entrypoint.sh /docker-compose/entrypoint.sh
+# RUN chmod +x /docker-compose/entrypoint.sh
 
 # Healthcheck (optional, depending on your application needs)
-HEALTHCHECK CMD curl --fail http://localhost:9000/ || exit 1
+# HEALTHCHECK CMD curl --fail http://localhost:8000/ || exit 1
 
 # Run the entrypoint file
-ENTRYPOINT ["/docker-compose/entrypoint.sh"]
+# ENTRYPOINT ["/docker-compose/entrypoint.sh"]
